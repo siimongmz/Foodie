@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,8 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -176,37 +179,36 @@ fun TopBar(modifier: Modifier = Modifier) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Product(info: ProductInfo, modifier: Modifier = Modifier) {
+fun Product(info: ProductInfo, modifier: Modifier = Modifier,onItemClick:() -> Unit) {
+    Card (onClick = onItemClick, colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background)){
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.padding(10.dp, 10.dp).fillMaxWidth()
 
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
-        modifier = Modifier.padding(10.dp, 10.dp)
-
-    ) {
-        Box(
-            modifier
-                .width(60.dp)
-                .height(60.dp)
-                .background(info.color)
-        )
-        Column(horizontalAlignment = Alignment.Start) {
-            Text(
-                text = info.name,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = modifier.padding(20.dp, 0.dp)
+        ) {
+            Box(
+                modifier
+                    .width(60.dp)
+                    .height(60.dp)
+                    .background(info.color)
             )
-            Text(
-                text = info.company,
-                style = MaterialTheme.typography.titleSmall,
-                modifier = modifier.padding(20.dp, 0.dp),
-                color = Color.Gray
-            )
+            Column(horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = info.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = modifier.padding(20.dp, 0.dp)
+                )
+                Text(
+                    text = info.company,
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = modifier.padding(20.dp, 0.dp),
+                    color = Color.Gray
+                )
+            }
+
         }
-
     }
-
 
 }
 
@@ -248,35 +250,41 @@ fun ProductList(modifier: Modifier = Modifier) {
             )
     }
     val lazyListState = rememberLazyListState()
-    var clickedItem by remember{ mutableStateOf<ProductInfo?>(null)}
+    var clickedItem by remember { mutableStateOf<ProductInfo?>(null) }
     LazyColumn(state = lazyListState, modifier = Modifier.imePadding()) {
 
         listProductInfo.forEach { productInfo ->
             item {
 
-                Product(productInfo, Modifier.clickable { clickedItem = productInfo })
+                Product(productInfo, onItemClick =  { clickedItem = productInfo })
 
             }
         }
     }
-    clickedItem?.let { ModalBottomSheet(onDismissRequest = { clickedItem = null }, sheetState = rememberModalBottomSheetState()) {
-        ProductSheet(info = it)
-    } }
+    clickedItem?.let {
+        ModalBottomSheet(
+            onDismissRequest = { clickedItem = null },
+            sheetState = rememberModalBottomSheetState()
+        ) {
+            ProductSheet(info = it)
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductSheet(info:ProductInfo){
-    Box (Modifier.padding(20.dp)){
+fun ProductSheet(info: ProductInfo) {
+    Box(Modifier.padding(20.dp)) {
         Row {
-            Box (
+            Box(
                 Modifier
                     .width(150.dp)
                     .height(150.dp)
-                    .background(info.color)){
+                    .background(info.color)
+            ) {
 
             }
-            Column (Modifier.padding(10.dp,0.dp,0.dp,0.dp)){
+            Column(Modifier.padding(10.dp, 0.dp, 0.dp, 0.dp)) {
                 Text(text = info.name, fontWeight = FontWeight.W600, fontSize = 25.sp)
                 Text(text = info.company, fontWeight = FontWeight.W400)
             }
