@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -70,6 +72,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
 import com.example.foodie.ui.theme.FoodieTheme
 import com.example.foodie.ui.theme.primaryDark
 import kotlinx.coroutines.CoroutineScope
@@ -139,8 +142,7 @@ class MainActivity : ComponentActivity() {
                         contentWindowInsets = WindowInsets.safeDrawing
                     )
                     { paddingValues ->
-                        window.statusBarColor =
-                            MaterialTheme.colorScheme.secondaryContainer.toArgb()
+
                         ProductList(Modifier.padding(paddingValues))
 
                     }
@@ -154,7 +156,7 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(modifier: Modifier = Modifier) {
-    TopAppBar(
+    CenterAlignedTopAppBar(
         title = {
 
             Text(
@@ -184,7 +186,9 @@ fun Product(info: ProductInfo, modifier: Modifier = Modifier,onItemClick:() -> U
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.padding(10.dp, 10.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(10.dp, 10.dp)
+                .fillMaxWidth()
 
         ) {
             Box(
@@ -254,6 +258,7 @@ fun ProductList(modifier: Modifier = Modifier) {
     LazyColumn(state = lazyListState, modifier = Modifier.imePadding()) {
 
         listProductInfo.forEach { productInfo ->
+            item { Spacer(modifier = Modifier.height(10.dp)) }
             item {
 
                 Product(productInfo, onItemClick =  { clickedItem = productInfo })
