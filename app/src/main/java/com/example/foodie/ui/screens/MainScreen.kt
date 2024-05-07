@@ -1,4 +1,4 @@
-package com.example.foodie
+package com.example.foodie.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

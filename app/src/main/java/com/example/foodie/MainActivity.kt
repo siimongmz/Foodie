@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.example.foodie.ui.screens.MainScreen
 import com.example.foodie.ui.theme.FoodieTheme
 
 data class BottomItem(
