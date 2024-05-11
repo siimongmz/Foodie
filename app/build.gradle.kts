@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -19,6 +20,11 @@ android {
             useSupportLibrary = true
         }
     }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 
     buildTypes {
         release {
@@ -35,14 +41,10 @@ android {
     }
     buildFeatures {
         compose = true
+
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 
@@ -56,6 +58,24 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("pl.coderion:openfoodfacts-java-wrapper:0.9.3"){
+        exclude("org.yaml")
+        exclude("org.slf4j")
+        exclude("ch.qos.logback")
+        exclude("org.reactivestreams")
+        exclude("org.apache.commons")
+        exclude("javax.validation")
+        exclude("javax.inject")
+        exclude("javax.annotation")
+        exclude("com.google.code.findbugs")
+        exclude("io.reactivex.rxjava2")
+        exclude("io.netty")
+        exclude("io.micronaut")
+
+    }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
