@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -40,7 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.example.foodie.ui.screens.MainScreen
+import com.example.foodie.ui.screens.SearchScreen
 import com.example.foodie.ui.theme.FoodieTheme
 
 data class BottomItem(
@@ -54,9 +54,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val items = listOf(
             BottomItem(
-                title = "Share",
-                selectedIcon = Icons.Filled.Share,
-                unselectedIcon = Icons.Outlined.Share
+                title = "Search",
+                selectedIcon = Icons.Filled.Search,
+                unselectedIcon = Icons.Outlined.Search
             ), BottomItem(
                 title = "Home",
                 selectedIcon = Icons.Filled.Home,
@@ -104,8 +104,8 @@ class MainActivity : ComponentActivity() {
                     )
                     { paddingValues ->
 
-                        MainScreen(Modifier.padding(paddingValues))
-
+                        //MainScreen(Modifier.padding(paddingValues))
+                        SearchScreen(Modifier.padding(paddingValues))
                     }
 
                 }
@@ -130,7 +130,7 @@ fun TopBar() {
             titleContentColor = MaterialTheme.colorScheme.secondary,
         ), navigationIcon = {
             Icon(
-                imageVector = Icons.Outlined.Search,
+                imageVector = Icons.Outlined.AccountCircle,
                 contentDescription = "Search",
                 modifier = Modifier.padding(10.dp, 10.dp),
                 tint = MaterialTheme.colorScheme.primary
