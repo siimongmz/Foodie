@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(padding: Modifier,searchInfoViewModel: SearchInfoViewModel) {
+fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
 
 
     var foodApiFacade: FoodApiFacade by remember {
@@ -68,9 +69,8 @@ fun SearchScreen(padding: Modifier,searchInfoViewModel: SearchInfoViewModel) {
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .padding(top = topPadding),
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,30 +88,20 @@ fun SearchScreen(padding: Modifier,searchInfoViewModel: SearchInfoViewModel) {
                 onValueChange = { text = it },
                 singleLine = true,
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        searchInfoViewModel.currentProduct.value = foodApiFacade.getProduct(text)
+                        if (searchInfoViewModel.currentProduct.value == null)
+                            searchInfoViewModel.currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
+                    }
+                }),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = "Search"
                     )
                 })
-
-            Button(
-                onClick = {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        searchInfoViewModel.currentProduct.value = foodApiFacade.getProduct(text)
-                        if (searchInfoViewModel.currentProduct.value == null)
-                            searchInfoViewModel.currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
-                    }
-                },
-                Modifier
-                    .height(55.dp)
-                    .padding(5.dp)
-            ) {
-                Text(text = "Buscar")
-            }
-
-
         }
 
 
