@@ -22,11 +22,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,20 +42,29 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.api.data.JsonFoodItem
 import com.example.foodie.facades.FoodApiFacade
+import com.example.foodie.viewModels.SearchInfoViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(padding: Modifier) {
-    var currentProduct: JsonFoodItem? by remember {
-        mutableStateOf(null)
-    }
+fun SearchScreen(padding: Modifier,searchInfoViewModel: SearchInfoViewModel) {
+
+
     var foodApiFacade: FoodApiFacade by remember {
         mutableStateOf(FoodApiFacade())
     }
     val topPadding: Dp by animateDpAsState(targetValue = 100.dp)
+    var visible by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(key1 = Unit, block = {
+        delay(600L)
+        visible = true
+    })
+    var animatedPadding = animateDpAsState(targetValue = if(visible) 30.dp else 0.dp,)
 
     Column(
         modifier = Modifier
@@ -73,8 +81,9 @@ fun SearchScreen(padding: Modifier) {
         Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
             TextField(
                 modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(animatedPadding.value)
+                    ,
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
@@ -90,9 +99,9 @@ fun SearchScreen(padding: Modifier) {
             Button(
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        currentProduct = foodApiFacade.getProduct(text)
-                        if (currentProduct == null)
-                            currentProduct = JsonFoodItem(text, null, 0, "product not found")
+                        searchInfoViewModel.currentProduct.value = foodApiFacade.getProduct(text)
+                        if (searchInfoViewModel.currentProduct.value == null)
+                            searchInfoViewModel.currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
                     }
                 },
                 Modifier
@@ -102,14 +111,7 @@ fun SearchScreen(padding: Modifier) {
                 Text(text = "Buscar")
             }
 
-            currentProduct?.let {
-                ModalBottomSheet(
-                    onDismissRequest = { currentProduct = null },
-                    sheetState = rememberModalBottomSheetState()
-                ) {
-                    FoodSheet(foodItem = it)
-                }
-            }
+
         }
 
 
@@ -196,7 +198,6 @@ fun SucceededFoodSheet(foodItem: JsonFoodItem) {
                 }
             }
         } else {
-            //TODO: Cargar la imagen de la foto de los ingredientes (Creando un SubcomposeAsyncImage() y cargando la image_ingredients_url)
             SubcomposeAsyncImage(
                 model = foodItem.product?.imageIngredientsUrl,
                 modifier = Modifier.fillMaxSize(),
