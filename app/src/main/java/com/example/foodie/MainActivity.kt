@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.example.foodie.api.data.JsonFoodItem
 import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.ui.screens.FoodSheet
-import com.example.foodie.ui.screens.SearchScreen
+import com.example.foodie.ui.screens.MainScreen
 import com.example.foodie.ui.screens.codeScanner
 import com.example.foodie.ui.theme.FoodieTheme
 import com.example.foodie.viewModels.SearchInfoViewModel
@@ -122,7 +122,8 @@ class MainActivity : ComponentActivity() {
                     )
                     { paddingValues ->
                         //MainScreen(Modifier.padding(paddingValues),searchInfoViewModel)
-                        SearchScreen(padding = Modifier.padding(paddingValues), searchInfoViewModel = searchInfoViewModel)
+
+                        MainScreen(modifier = Modifier.padding(paddingValues), searchInfoViewModel = searchInfoViewModel)
                         ProductInfoCard(searchInfoViewModel = searchInfoViewModel)
                     }
 
@@ -171,7 +172,7 @@ fun ScannerFAB(searchInfoViewModel: SearchInfoViewModel) {
     FloatingActionButton(
         onClick = { showScanner = true },
         containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     ) {
         Icon(painterResource(id = R.drawable.barcode_scanner), "Scann")
     }
