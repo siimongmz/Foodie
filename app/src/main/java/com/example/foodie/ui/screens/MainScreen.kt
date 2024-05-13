@@ -32,13 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.foodie.viewModels.SearchInfoViewModel
 
 data class ProductInfo(
     val name: String, val company: String, var color: Color
 )
 
 @Composable
-fun MainScreen(modifier: Modifier) {
+fun MainScreen(modifier: Modifier,searchInfoViewModel: SearchInfoViewModel) {
     ProductList(modifier)
 }
 
@@ -145,4 +146,6 @@ fun ProductSheet(info: ProductInfo) {
         }
 
     }
+
+
 }
