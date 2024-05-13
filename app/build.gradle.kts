@@ -61,21 +61,8 @@ dependencies {
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("io.coil-kt:coil-compose:2.6.0")
-    implementation("pl.coderion:openfoodfacts-java-wrapper:0.9.3"){
-        exclude("org.yaml")
-        exclude("org.slf4j")
-        exclude("ch.qos.logback")
-        exclude("org.reactivestreams")
-        exclude("org.apache.commons")
-        exclude("javax.validation")
-        exclude("javax.inject")
-        exclude("javax.annotation")
-        exclude("com.google.code.findbugs")
-        exclude("io.reactivex.rxjava2")
-        exclude("io.netty")
-        exclude("io.micronaut")
+    implementation (libs.play.services.code.scanner)
 
-    }
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
