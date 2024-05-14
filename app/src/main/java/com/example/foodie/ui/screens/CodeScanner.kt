@@ -17,14 +17,14 @@ fun codeScanner(context: Context,searchInfoViewModel: SearchInfoViewModel) {
 
     scanner.startScan()
         .addOnSuccessListener { barcode ->
-            Log.d("CODIGO","Exitoso")
+            Log.d("FOODIE-CODIGO","Exitoso")
             searchInfoViewModel.code.value = barcode.rawValue
         }
         .addOnCanceledListener {
-            Log.d("CODIGO","Cancelado")
+            Log.d("FOODIE-CODIGO","Cancelado")
         }
-        .addOnFailureListener { e ->
-            Log.d("CODIGO","Fallido")
+        .addOnFailureListener { _ ->
+            Log.d("FOODIE-CODIGO","Fallido")
         }
 
 }

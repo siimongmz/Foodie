@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -40,9 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.foodie.api.data.JsonFoodItem
 import com.example.foodie.facades.FoodApiFacade
@@ -137,11 +135,7 @@ fun TopBar() {
     CenterAlignedTopAppBar(
         title = {
 
-            Text(
-                text = "Foodie",
-                letterSpacing = TextUnit(2.5F, TextUnitType.Sp),
-                fontWeight = FontWeight.SemiBold
-            )
+            Icon(painter = painterResource(id = R.drawable.foodie_text), contentDescription = null, modifier = Modifier.size(100.dp))
         }, colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
             titleContentColor = MaterialTheme.colorScheme.secondary,
@@ -172,7 +166,7 @@ fun ScannerFAB(searchInfoViewModel: SearchInfoViewModel) {
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     ) {
-        Icon(painterResource(id = R.drawable.barcode_scanner), "Scann")
+        Icon(painterResource(id = R.drawable.just_logo), "Scann", modifier = Modifier.padding(10.dp))
     }
     if (showScanner) {
         codeScanner(LocalContext.current,searchInfoViewModel)

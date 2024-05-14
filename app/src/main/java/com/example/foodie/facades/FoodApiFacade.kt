@@ -6,7 +6,7 @@ import com.example.foodie.api.data.JsonFoodItem
 class FoodApiFacade {
 
     fun getProduct(code:String): JsonFoodItem? {
-        val foodApi : FoodApi = FoodApi()
+        val foodApi = FoodApi()
 
         return foodApi.getProduct(code)
 

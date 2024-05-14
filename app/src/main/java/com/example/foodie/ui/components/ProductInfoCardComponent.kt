@@ -34,13 +34,13 @@ import com.example.foodie.viewModels.SearchInfoViewModel
 @Composable
 fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel) {
 
-    var currentProduct: JsonFoodItem? = searchInfoViewModel.currentProduct.value
+    val currentProduct = searchInfoViewModel.currentProduct
 
     searchInfoViewModel.currentProduct.value?.let {
         ModalBottomSheet(
             //TODO: CAMBIAR searchInfoViewModel.currentProduct.value --> currentProduct
             onDismissRequest = {
-                searchInfoViewModel.currentProduct.value = null
+                currentProduct.value = null
             },
             sheetState = rememberModalBottomSheetState()
         ) {
@@ -51,7 +51,7 @@ fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel) {
 
 @Composable
 fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
-    if (foodItem.status_verbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
+    if (foodItem.statusVerbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
         foodItem = foodItem,
         searchInfoViewModel
     )
@@ -122,7 +122,7 @@ fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoVi
             .padding(20.dp)
             .fillMaxSize()
     ) {
-        val lazyListState = rememberLazyListState();
+        val lazyListState = rememberLazyListState()
         if (foodItem.product?.ingredients != null) {
             LazyColumn(state = lazyListState, modifier = Modifier.fillMaxWidth()) {
                 foodItem.product.ingredients.forEach { ingredient ->

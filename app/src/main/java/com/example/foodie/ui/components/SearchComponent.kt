@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.foodie.api.data.JsonFoodItem
 import com.example.foodie.facades.FoodApiFacade
@@ -37,18 +36,19 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
 
-    var foodApiFacade: FoodApiFacade by remember {
+    val foodApiFacade: FoodApiFacade by remember {
         mutableStateOf(FoodApiFacade())
     }
-    val topPadding: Dp by animateDpAsState(targetValue = 100.dp)
     var visible by remember {
         mutableStateOf(false)
     }
+    val currentProduct = searchInfoViewModel.currentProduct
+    val animatedPadding = animateDpAsState(targetValue = if(visible) 30.dp else 0.dp, label = "searchBar")
+
     LaunchedEffect(key1 = Unit, block = {
         delay(600L)
         visible = true
     })
-    var animatedPadding = animateDpAsState(targetValue = if(visible) 30.dp else 0.dp,)
 
     Column(
         modifier = Modifier
@@ -74,9 +74,9 @@ fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
                     CoroutineScope(Dispatchers.IO).launch {
-                        searchInfoViewModel.currentProduct.value = foodApiFacade.getProduct(text)
-                        if (searchInfoViewModel.currentProduct.value == null)
-                            searchInfoViewModel.currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
+                        currentProduct.value = foodApiFacade.getProduct(text)
+                        if (currentProduct.value == null)
+                            currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
                     }
                 }),
                 trailingIcon = {
