@@ -38,7 +38,6 @@ fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel) {
 
     searchInfoViewModel.currentProduct.value?.let {
         ModalBottomSheet(
-            //TODO: CAMBIAR searchInfoViewModel.currentProduct.value --> currentProduct
             onDismissRequest = {
                 currentProduct.value = null
             },
