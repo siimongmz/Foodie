@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
@@ -84,7 +86,7 @@ fun ErrorFoodSheet() {
 
 @Composable
 fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
-    if (!searchInfoViewModel.recentProducts.contains(foodItem)){
+    if (!searchInfoViewModel.recentProducts.contains(foodItem)) {
         searchInfoViewModel.recentProducts.add(foodItem)
     }
 
@@ -121,24 +123,46 @@ fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoVi
             .padding(20.dp)
             .fillMaxSize()
     ) {
-        val lazyListState = rememberLazyListState()
-        if (foodItem.product?.ingredients != null) {
-            LazyColumn(state = lazyListState, modifier = Modifier.fillMaxWidth()) {
-                foodItem.product.ingredients.forEach { ingredient ->
-                    item {
-                        Text(text = ingredient.text)
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Ingredients",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            val lazyListState = rememberLazyListState()
+            if (foodItem.product?.ingredients != null) {
+                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxWidth()) {
+                    foodItem.product.ingredients.forEach { ingredient ->
+                        item {
+                            Card(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(30.dp)
+                                    .padding(top = 2.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text(text = ingredient.text, textAlign = TextAlign.Center)
+                                }
+                            }
+                        }
                     }
                 }
+            } else {
+                SubcomposeAsyncImage(
+                    model = foodItem.product?.imageIngredientsUrl,
+                    modifier = Modifier.fillMaxSize(),
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    contentDescription = foodItem.product?.productName
+                )
             }
-        } else {
-            SubcomposeAsyncImage(
-                model = foodItem.product?.imageIngredientsUrl,
-                modifier = Modifier.fillMaxSize(),
-                loading = {
-                    CircularProgressIndicator()
-                },
-                contentDescription = foodItem.product?.productName
-            )
         }
 
     }
