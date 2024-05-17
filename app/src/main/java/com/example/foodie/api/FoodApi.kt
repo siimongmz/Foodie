@@ -1,6 +1,7 @@
 package com.example.foodie.api
 
 
+import android.util.Log
 import com.example.foodie.api.data.JsonFoodItem
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -21,7 +22,7 @@ class FoodApi {
                 .create(FoodApiInterface::class.java)
         val retrofitData = retrofitBuilder.getData(code)
 
-        return retrofitData.execute().body()
+        return retrofitData.execute().body().also { Log.d("Respuesta",it.toString()) }
 
 
     }
