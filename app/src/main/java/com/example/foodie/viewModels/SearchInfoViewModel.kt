@@ -9,4 +9,5 @@ class SearchInfoViewModel : ViewModel() {
     var currentProduct = mutableStateOf<JsonFoodItem?>(null)
     var code = mutableStateOf<String?>(null)
     var recentProducts = SnapshotStateList<JsonFoodItem>()
+    var imagen = mutableStateOf<String?>(null)
 }

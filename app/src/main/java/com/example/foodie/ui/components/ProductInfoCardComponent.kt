@@ -1,5 +1,6 @@
 package com.example.foodie.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,9 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
@@ -25,6 +29,7 @@ import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,12 +51,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
+import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.tools.translate
+import com.example.foodie.viewModels.MainAppViewModel
 import com.example.foodie.viewModels.SearchInfoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel) {
+fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppViewModel: MainAppViewModel) {
 
     val currentProduct = searchInfoViewModel.currentProduct
 
@@ -59,19 +67,17 @@ fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel) {
         ModalBottomSheet(
             onDismissRequest = {
                 currentProduct.value = null
-            },
-            sheetState = rememberModalBottomSheetState()
+            }, sheetState = rememberModalBottomSheetState()
         ) {
-            FoodSheet(foodItem = it, searchInfoViewModel)
+            FoodSheet(foodItem = it, searchInfoViewModel = searchInfoViewModel, mainAppViewModel = mainAppViewModel)
         }
     }
 }
 
 @Composable
-fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
+fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel,mainAppViewModel: MainAppViewModel) {
     if (foodItem.statusVerbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
-        foodItem = foodItem,
-        searchInfoViewModel
+        foodItem = foodItem, searchInfoViewModel = searchInfoViewModel, mainAppViewModel = mainAppViewModel
     )
 }
 
@@ -102,56 +108,72 @@ fun ErrorFoodSheet() {
 }
 
 @Composable
-fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
+fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppViewModel: MainAppViewModel) {
     if (!searchInfoViewModel.recentProducts.contains(foodItem)) {
         searchInfoViewModel.recentProducts.add(foodItem)
     }
-    Column {
-
-        ProductPresentation(foodItem = foodItem)
+    Column() {
+        ProductPresentation(foodItem = foodItem,searchInfoViewModel)
         Spacer(modifier = Modifier.height(20.dp))
-        IngredientInfo(foodItem = foodItem)
+        Column(Modifier.verticalScroll(rememberScrollState())) {
+            AllergensInfo(foodItem = foodItem, mainAppViewModel = mainAppViewModel)
+            Spacer(modifier = Modifier.height(20.dp))
+            IngredientInfo(foodItem = foodItem)
+        }
+
     }
 
 }
 
 @Composable
-fun ProductPresentation(foodItem: JsonFoodItem) {
+fun ProductPresentation(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
 
     Box {
         Row {
-            Box(
-                Modifier
+            Card(
+                modifier = Modifier
                     .width(150.dp)
                     .height(150.dp)
+                    .padding(10.dp),
+                shape = RoundedCornerShape(10.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground)
+
             ) {
                 SubcomposeAsyncImage(
                     model = foodItem.product?.imageFrontSmallUrl,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clickable {
+                            searchInfoViewModel.imagen.value = foodItem.product?.imageFrontSmallUrl
+                        },
                     loading = {
                         CircularProgressIndicator()
                     },
                     contentDescription = foodItem.product?.productName
                 )
             }
-            Column (Modifier.height(150.dp)){
+            Column(
+                Modifier
+                    .height(150.dp)
+                    .padding(start = 10.dp, end = 10.dp)
+            ) {
                 Column(Modifier.height(IntrinsicSize.Min)) {
                     foodItem.product?.let {
                         Text(
-                            text = it.productName,
-                            fontWeight = FontWeight.W600,
-                            fontSize = 25.sp
+                            text = it.productName, fontWeight = FontWeight.W600, fontSize = 25.sp
                         )
                     }
                     foodItem.product?.let {
                         Text(
-                            text = it.brands,
-                            fontWeight = FontWeight.W400
+                            text = it.brands, fontWeight = FontWeight.W400
                         )
                     }
                 }
                 ProductActionButtons()
             }
+        }
+        Column(Modifier.height(150.dp)) {
+
         }
     }
 }
@@ -165,13 +187,14 @@ fun ProductActionButtons() {
         modifier = Modifier
             .width(IntrinsicSize.Max)
             .fillMaxHeight()
-            .padding(0.dp),
+            .padding(10.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.Bottom,
 
         ) {
         Button(
-            onClick = { liked = !liked }, modifier = Modifier
+            onClick = { liked = !liked },
+            modifier = Modifier
                 .padding(end = 10.dp)
                 .fillMaxWidth()
                 .weight(1f),
@@ -232,31 +255,34 @@ fun ProductActionButtons() {
 
     }
 }
+
 @Composable
 fun IngredientInfo(foodItem: JsonFoodItem) {
     Box(
-        Modifier
-            .padding(20.dp)
-            .fillMaxSize()
+        Modifier.padding(20.dp)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier) {
             Text(
-                text = "Ingredients",
+                text = "Ingredientes",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            val lazyListState = rememberLazyListState()
+            val lazyGridtState = rememberLazyGridState()
             if (foodItem.product?.ingredients != null) {
-                LazyColumn(state = lazyListState, modifier = Modifier.fillMaxWidth()) {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 128.dp),
+                    modifier = Modifier.height(300.dp),
+                    state = lazyGridtState
+                ) {
                     foodItem.product.ingredients.forEach { ingredient ->
                         item {
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(30.dp)
-                                    .padding(top = 2.dp),
+                                    .height(50.dp)
+                                    .padding(2.dp),
                                 shape = RoundedCornerShape(5.dp),
 
                                 ) {
@@ -285,6 +311,71 @@ fun IngredientInfo(foodItem: JsonFoodItem) {
 
     }
 }
+
+@Composable
+fun AllergensInfo(foodItem: JsonFoodItem, mainAppViewModel: MainAppViewModel) {
+    Box(
+        Modifier
+            .padding(20.dp)
+            .fillMaxSize()
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = "Alergenos",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.W600,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+
+            val lazyGridtState = rememberLazyGridState()
+            if (foodItem.product?.allergens != "") {
+                LazyVerticalGrid(
+                    columns = GridCells.Adaptive(minSize = 128.dp),
+                    modifier = Modifier.height(100.dp),
+                    state = lazyGridtState
+                ) {
+                    foodItem.product?.allergens?.split(",")?.forEach { allergen ->
+                        var actualAllergen = translate(allergen.split("en:")[1])
+                        var allergic = false
+
+                        for (a in ALLERGENS_LIST){
+                            if (actualAllergen == a.name && mainAppViewModel.allergens[a.allergen.ordinal]){
+                                allergic = true
+                            }
+                        }
+
+                        item {
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                                    .padding(2.dp),
+                                shape = RoundedCornerShape(5.dp),
+                                colors = if (allergic) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer) else CardDefaults.cardColors()
+
+                                ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier.fillMaxSize()
+                                ) {
+                                    Text(
+                                        text = actualAllergen,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Text(text = "Desconocido")
+            }
+        }
+
+    }
+}
+
 fun likeIcon(liked: Boolean): ImageVector {
     return if (liked) {
         Icons.Filled.Favorite
