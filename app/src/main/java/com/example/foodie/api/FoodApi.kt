@@ -2,7 +2,7 @@ package com.example.foodie.api
 
 
 import android.util.Log
-import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.api.data.FoodItem
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -13,7 +13,7 @@ class FoodApi {
 
     //Ejemplo    = "https://world.openfoodfacts.net/api/v2/product/3017624010701?fields=product_name,ingredients,brands,allergens"
 
-    fun getProduct(code: String): JsonFoodItem? {
+    fun getProduct(code: String): FoodItem? {
         val retrofitBuilder =
             Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())

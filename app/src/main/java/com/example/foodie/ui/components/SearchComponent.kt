@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.api.data.FoodItem
 import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.viewModels.SearchInfoViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -76,7 +76,7 @@ fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
                     CoroutineScope(Dispatchers.IO).launch {
                         currentProduct.value = foodApiFacade.getProduct(text)
                         if (currentProduct.value == null)
-                            currentProduct.value = JsonFoodItem(text, null, 0, "product not found")
+                            currentProduct.value = FoodItem(text, null, 0, "product not found")
                     }
                 }),
                 trailingIcon = {

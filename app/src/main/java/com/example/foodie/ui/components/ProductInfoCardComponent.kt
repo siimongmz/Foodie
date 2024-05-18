@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.ALLERGENS_LIST
-import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.api.data.FoodItem
 import com.example.foodie.states.MainAppState
 import com.example.foodie.tools.translate
 import com.example.foodie.viewModels.SearchInfoViewModel
@@ -75,7 +75,7 @@ fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppState: Main
 }
 
 @Composable
-fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel,mainAppState: MainAppState) {
+fun FoodSheet(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
     if (foodItem.statusVerbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
         foodItem = foodItem, searchInfoViewModel = searchInfoViewModel, mainAppState = mainAppState
     )
@@ -108,7 +108,7 @@ fun ErrorFoodSheet() {
 }
 
 @Composable
-fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
+fun SucceededFoodSheet(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
     if (!searchInfoViewModel.recentProducts.contains(foodItem)) {
         searchInfoViewModel.recentProducts.add(foodItem)
     }
@@ -126,7 +126,7 @@ fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoVi
 }
 
 @Composable
-fun ProductPresentation(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel) {
+fun ProductPresentation(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel) {
 
     Box {
         Row {
@@ -257,7 +257,7 @@ fun ProductActionButtons() {
 }
 
 @Composable
-fun IngredientInfo(foodItem: JsonFoodItem) {
+fun IngredientInfo(foodItem: FoodItem) {
     Box(
         Modifier.padding(20.dp)
     ) {
@@ -313,7 +313,7 @@ fun IngredientInfo(foodItem: JsonFoodItem) {
 }
 
 @Composable
-fun AllergensInfo(foodItem: JsonFoodItem, mainAppState: MainAppState) {
+fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
     Box(
         Modifier
             .padding(20.dp)
@@ -335,7 +335,7 @@ fun AllergensInfo(foodItem: JsonFoodItem, mainAppState: MainAppState) {
                     state = lazyGridtState
                 ) {
                     foodItem.product?.allergens?.split(",")?.forEach { allergen ->
-                        var actualAllergen = translate(allergen.split("en:")[1])
+                        val actualAllergen = translate(allergen.split("en:")[1])
                         var allergic = false
 
                         for (a in ALLERGENS_LIST){

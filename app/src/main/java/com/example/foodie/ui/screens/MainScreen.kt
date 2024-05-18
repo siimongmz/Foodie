@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
-import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.api.data.FoodItem
 import com.example.foodie.ui.components.SearchScreen
 import com.example.foodie.viewModels.SearchInfoViewModel
 
@@ -39,7 +39,7 @@ fun MainScreen(modifier: Modifier, searchInfoViewModel: SearchInfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Product(info: JsonFoodItem, modifier: Modifier = Modifier, onItemClick: () -> Unit) {
+fun Product(info: FoodItem, modifier: Modifier = Modifier, onItemClick: () -> Unit) {
     Card(
         onClick = onItemClick,
         modifier = Modifier.padding(10.dp),

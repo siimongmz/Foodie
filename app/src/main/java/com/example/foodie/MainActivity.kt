@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.api.data.FoodItem
 import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.ui.components.FullScreenImage
 import com.example.foodie.ui.components.ProductInfoCard
@@ -67,7 +67,7 @@ data class BottomItem(
 
 class MainActivity : ComponentActivity() {
 
-    val mainAppViewModel by viewModels<MainAppViewModel>()
+    private val mainAppViewModel by viewModels<MainAppViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -75,10 +75,7 @@ class MainActivity : ComponentActivity() {
             val searchInfoViewModel: SearchInfoViewModel by remember {
                 mutableStateOf(SearchInfoViewModel())
             }
-            val mainAppViewModel: MainAppViewModel by remember {
-                mutableStateOf(MainAppViewModel())
-            }
-            var items = listOf(
+            val items = listOf(
                 BottomItem(
                     title = "Search",
                     route = SCREENS.SHARE,
@@ -222,7 +219,7 @@ fun ScannerFAB(searchInfoViewModel: SearchInfoViewModel) {
                 foodApiFacade.getProduct(searchInfoViewModel.code.value!!)
             if (searchInfoViewModel.currentProduct.value == null)
                 searchInfoViewModel.currentProduct.value =
-                    JsonFoodItem(searchInfoViewModel.code.value!!, null, 0, "product not found")
+                    FoodItem(searchInfoViewModel.code.value!!, null, 0, "product not found")
         }
     }
 }
