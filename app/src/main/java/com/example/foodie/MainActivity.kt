@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +66,8 @@ data class BottomItem(
     )
 
 class MainActivity : ComponentActivity() {
+
+    val mainAppViewModel by viewModels<MainAppViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -137,7 +141,8 @@ class MainActivity : ComponentActivity() {
                             SCREENS.PROFILE -> ProfileScreen(
                                 modifier = Modifier.padding(
                                     paddingValues
-                                ), mainAppViewModel = mainAppViewModel
+                                ), state = mainAppViewModel.state.collectAsState().value,
+                                onEvent = mainAppViewModel::onEvent
                             )
 
                             SCREENS.SHARE -> TODO()
@@ -145,7 +150,7 @@ class MainActivity : ComponentActivity() {
 
                         ProductInfoCard(
                             searchInfoViewModel = searchInfoViewModel,
-                            mainAppViewModel = mainAppViewModel
+                            mainAppState = mainAppViewModel.state.collectAsState().value
                         )
                         FullScreenImage(searchInfoViewModel = searchInfoViewModel)
                     }
