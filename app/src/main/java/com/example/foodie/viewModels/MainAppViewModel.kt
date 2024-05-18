@@ -1,25 +1,25 @@
 package com.example.foodie.viewModels
 
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.foodie.ALLERGENS_LIST
-import com.example.foodie.ui.screens.SCREENS
+import com.example.foodie.events.MainAppEvent
+import com.example.foodie.states.MainAppState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 class MainAppViewModel() : ViewModel() {
 
-    companion object{
-        fun initAllergens():MutableList<Boolean>{
-            var allergensList = mutableStateListOf<Boolean>()
-            ALLERGENS_LIST.forEach() {
-                allergensList.add(false)
+    val state = MutableStateFlow(MainAppState())
+    fun onEvent(event: MainAppEvent){
+        when(event){
+            is MainAppEvent.AllergenChange-> {
+                state.update { mainAppState ->
+                    mainAppState.copy(
+                        allergens = mainAppState.allergens.also { it[event.allergen.allergen.ordinal] = !it[event.allergen.allergen.ordinal] }
+                    )
+                }
             }
-            return allergensList
         }
     }
-
-    var currentScreen = mutableStateOf(SCREENS.HOME)
-    var allergens = initAllergens()
 
 
 }
