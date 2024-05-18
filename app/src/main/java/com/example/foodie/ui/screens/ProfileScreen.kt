@@ -1,6 +1,5 @@
 package com.example.foodie.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,11 +19,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.Allergen
-import com.example.foodie.viewModels.MainAppViewModel
+import com.example.foodie.events.MainAppEvent
+import com.example.foodie.states.MainAppState
 
 
 @Composable
-fun ProfileScreen(modifier: Modifier, mainAppViewModel: MainAppViewModel) {
+fun ProfileScreen(
+    modifier: Modifier,
+    state: MainAppState,
+    onEvent: (MainAppEvent) -> Unit
+) {
 
     Column(
         modifier = modifier
@@ -34,7 +38,7 @@ fun ProfileScreen(modifier: Modifier, mainAppViewModel: MainAppViewModel) {
         verticalArrangement = Arrangement.Top
     ) {
         ALLERGENS_LIST.forEach {
-            AllergenListItem(it, mainAppViewModel)
+            AllergenListItem(it, state,onEvent)
         }
     }
 
@@ -42,7 +46,9 @@ fun ProfileScreen(modifier: Modifier, mainAppViewModel: MainAppViewModel) {
 
 
 @Composable
-fun AllergenListItem(alergen: Allergen, mainAppViewModel: MainAppViewModel) {
+fun AllergenListItem(alergen: Allergen,
+                     state: MainAppState,
+                     onEvent: (MainAppEvent) -> Unit) {
 
     Row(Modifier.padding(vertical = 15.dp)) {
         Box(
@@ -60,12 +66,8 @@ fun AllergenListItem(alergen: Allergen, mainAppViewModel: MainAppViewModel) {
                 .weight(1f), contentAlignment = Alignment.CenterEnd
         ) {
             Switch(
-                checked = mainAppViewModel.allergens[alergen.allergen.ordinal],
-                onCheckedChange = {
-                    mainAppViewModel.allergens[alergen.allergen.ordinal] = it
-                    Log.d("Booleans",
-                        mainAppViewModel.allergens[alergen.allergen.ordinal].toString()
-                    )
+                checked = state.allergens[alergen.allergen.ordinal],
+                onCheckedChange = {onEvent(MainAppEvent.AllergenChange(alergen))
                 }
             )
         }

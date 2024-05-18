@@ -53,13 +53,13 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.api.data.JsonFoodItem
+import com.example.foodie.states.MainAppState
 import com.example.foodie.tools.translate
-import com.example.foodie.viewModels.MainAppViewModel
 import com.example.foodie.viewModels.SearchInfoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppViewModel: MainAppViewModel) {
+fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
 
     val currentProduct = searchInfoViewModel.currentProduct
 
@@ -69,15 +69,15 @@ fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppViewModel: 
                 currentProduct.value = null
             }, sheetState = rememberModalBottomSheetState()
         ) {
-            FoodSheet(foodItem = it, searchInfoViewModel = searchInfoViewModel, mainAppViewModel = mainAppViewModel)
+            FoodSheet(foodItem = it, searchInfoViewModel = searchInfoViewModel, mainAppState = mainAppState)
         }
     }
 }
 
 @Composable
-fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel,mainAppViewModel: MainAppViewModel) {
+fun FoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel,mainAppState: MainAppState) {
     if (foodItem.statusVerbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
-        foodItem = foodItem, searchInfoViewModel = searchInfoViewModel, mainAppViewModel = mainAppViewModel
+        foodItem = foodItem, searchInfoViewModel = searchInfoViewModel, mainAppState = mainAppState
     )
 }
 
@@ -108,7 +108,7 @@ fun ErrorFoodSheet() {
 }
 
 @Composable
-fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppViewModel: MainAppViewModel) {
+fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
     if (!searchInfoViewModel.recentProducts.contains(foodItem)) {
         searchInfoViewModel.recentProducts.add(foodItem)
     }
@@ -116,7 +116,7 @@ fun SucceededFoodSheet(foodItem: JsonFoodItem, searchInfoViewModel: SearchInfoVi
         ProductPresentation(foodItem = foodItem,searchInfoViewModel)
         Spacer(modifier = Modifier.height(20.dp))
         Column(Modifier.verticalScroll(rememberScrollState())) {
-            AllergensInfo(foodItem = foodItem, mainAppViewModel = mainAppViewModel)
+            AllergensInfo(foodItem = foodItem, mainAppState = mainAppState)
             Spacer(modifier = Modifier.height(20.dp))
             IngredientInfo(foodItem = foodItem)
         }
@@ -313,7 +313,7 @@ fun IngredientInfo(foodItem: JsonFoodItem) {
 }
 
 @Composable
-fun AllergensInfo(foodItem: JsonFoodItem, mainAppViewModel: MainAppViewModel) {
+fun AllergensInfo(foodItem: JsonFoodItem, mainAppState: MainAppState) {
     Box(
         Modifier
             .padding(20.dp)
@@ -339,7 +339,7 @@ fun AllergensInfo(foodItem: JsonFoodItem, mainAppViewModel: MainAppViewModel) {
                         var allergic = false
 
                         for (a in ALLERGENS_LIST){
-                            if (actualAllergen == a.name && mainAppViewModel.allergens[a.allergen.ordinal]){
+                            if (actualAllergen == a.name && mainAppState.allergens[a.allergen.ordinal]){
                                 allergic = true
                             }
                         }
