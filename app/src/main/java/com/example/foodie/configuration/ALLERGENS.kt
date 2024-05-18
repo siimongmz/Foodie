@@ -1,4 +1,4 @@
-package com.example.foodie
+package com.example.foodie.configuration
 
 enum class ALLERGENS {
     EGG,MILK,GLUTEN,SOYBEANS,NUTS

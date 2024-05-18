@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodie.ALLERGENS_LIST
-import com.example.foodie.Allergen
+import com.example.foodie.configuration.Allergen
 import com.example.foodie.events.MainAppEvent
 import com.example.foodie.states.MainAppState
 
