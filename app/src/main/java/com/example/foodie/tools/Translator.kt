@@ -2,7 +2,7 @@ package com.example.foodie.tools
 
 fun translate(text:String):String{
     return when(text){
-        "eggs" -> "Huevos"
+        "eggs" -> "Huevo"
         "milk" -> "Leche"
         "gluten" -> "Gluten"
         "soybeans" -> "Soja"
