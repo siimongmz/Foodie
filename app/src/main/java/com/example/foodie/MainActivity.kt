@@ -2,7 +2,6 @@ package com.example.foodie
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -42,8 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.example.foodie.api.data.FoodItem
+import com.example.foodie.events.SearchInfoEvent
 import com.example.foodie.facades.FoodApiFacade
+import com.example.foodie.states.SearchInfoState
 import com.example.foodie.ui.components.FullScreenImage
 import com.example.foodie.ui.components.ProductInfoCard
 import com.example.foodie.ui.screens.MainScreen
@@ -53,9 +53,6 @@ import com.example.foodie.ui.screens.codeScanner
 import com.example.foodie.ui.theme.FoodieTheme
 import com.example.foodie.viewModels.MainAppViewModel
 import com.example.foodie.viewModels.SearchInfoViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 data class BottomItem(
     val title: String,
@@ -68,13 +65,11 @@ data class BottomItem(
 class MainActivity : ComponentActivity() {
 
     private val mainAppViewModel by viewModels<MainAppViewModel>()
+    private val searchInfoViewModel by viewModels<SearchInfoViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContent {
-            val searchInfoViewModel: SearchInfoViewModel by remember {
-                mutableStateOf(SearchInfoViewModel())
-            }
             val items = listOf(
                 BottomItem(
                     title = "Search",
@@ -124,7 +119,12 @@ class MainActivity : ComponentActivity() {
 
                             }
                         },
-                        floatingActionButton = { ScannerFAB(searchInfoViewModel = searchInfoViewModel) },
+                        floatingActionButton = {
+                            ScannerFAB(
+                                searchInfoState = searchInfoViewModel.state.collectAsState().value,
+                                onEvent = searchInfoViewModel::onEvent
+                            )
+                        },
                         topBar = { TopBar() },
                         contentWindowInsets = WindowInsets.safeDrawing
                     )
@@ -132,13 +132,14 @@ class MainActivity : ComponentActivity() {
                         when (selectedRoute) {
                             SCREENS.HOME -> MainScreen(
                                 modifier = Modifier.padding(paddingValues),
-                                searchInfoViewModel = searchInfoViewModel
+                                searchInfoState = searchInfoViewModel.state.collectAsState().value,
+                                onEvent = searchInfoViewModel::onEvent
+
                             )
 
                             SCREENS.PROFILE -> ProfileScreen(
-                                modifier = Modifier.padding(
-                                    paddingValues
-                                ), state = mainAppViewModel.state.collectAsState().value,
+                                modifier = Modifier.padding(paddingValues),
+                                mainAppState = mainAppViewModel.state.collectAsState().value,
                                 onEvent = mainAppViewModel::onEvent
                             )
 
@@ -146,10 +147,14 @@ class MainActivity : ComponentActivity() {
                         }
 
                         ProductInfoCard(
-                            searchInfoViewModel = searchInfoViewModel,
-                            mainAppState = mainAppViewModel.state.collectAsState().value
+                            searchInfoState = searchInfoViewModel.state.collectAsState().value,
+                            mainAppState = mainAppViewModel.state.collectAsState().value,
+                            onEvent = searchInfoViewModel::onEvent
                         )
-                        FullScreenImage(searchInfoViewModel = searchInfoViewModel)
+                        FullScreenImage(
+                            searchInfoState = searchInfoViewModel.state.collectAsState().value,
+                            onEvent = searchInfoViewModel::onEvent
+                        )
                     }
 
                 }
@@ -186,7 +191,7 @@ fun TopBar() {
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ScannerFAB(searchInfoViewModel: SearchInfoViewModel) {
+fun ScannerFAB(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
     var showScanner by rememberSaveable {
         mutableStateOf(false)
     }
@@ -206,21 +211,9 @@ fun ScannerFAB(searchInfoViewModel: SearchInfoViewModel) {
         )
     }
     if (showScanner) {
-        codeScanner(LocalContext.current, searchInfoViewModel)
+        codeScanner(LocalContext.current, onEvent)
         showScanner = false
-        searchInfoViewModel.code.value?.let {
-            Log.d("CODIGO", it)
-        }
 
-    }
-    if (searchInfoViewModel.code.value != null) {
-        CoroutineScope(Dispatchers.IO).launch {
-            searchInfoViewModel.currentProduct.value =
-                foodApiFacade.getProduct(searchInfoViewModel.code.value!!)
-            if (searchInfoViewModel.currentProduct.value == null)
-                searchInfoViewModel.currentProduct.value =
-                    FoodItem(searchInfoViewModel.code.value!!, null, 0, "product not found")
-        }
     }
 }
 

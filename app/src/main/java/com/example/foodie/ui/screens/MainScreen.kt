@@ -26,14 +26,23 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.api.data.FoodItem
+import com.example.foodie.events.SearchInfoEvent
+import com.example.foodie.states.SearchInfoState
 import com.example.foodie.ui.components.SearchScreen
-import com.example.foodie.viewModels.SearchInfoViewModel
 
 @Composable
-fun MainScreen(modifier: Modifier, searchInfoViewModel: SearchInfoViewModel) {
+fun MainScreen(
+    modifier: Modifier,
+    searchInfoState: SearchInfoState,
+    onEvent: (SearchInfoEvent) -> Unit
+) {
     Column(modifier = modifier) {
-        SearchScreen(searchInfoViewModel = searchInfoViewModel)
-        ProductList(searchInfoViewModel = searchInfoViewModel)
+        SearchScreen(searchInfoState = searchInfoState, onEvent = onEvent)
+
+        ProductList(
+            searchInfoState = searchInfoState,
+            onEvent = onEvent
+        )
     }
 }
 
@@ -59,7 +68,7 @@ fun Product(info: FoodItem, modifier: Modifier = Modifier, onItemClick: () -> Un
                 modifier
                     .width(60.dp)
                     .height(60.dp)
-            ){
+            ) {
                 SubcomposeAsyncImage(
                     model = info.product?.imageFrontSmallUrl,
                     modifier = Modifier.fillMaxSize(),
@@ -69,7 +78,10 @@ fun Product(info: FoodItem, modifier: Modifier = Modifier, onItemClick: () -> Un
                     contentDescription = info.product?.productName
                 )
             }
-            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(top = 5.dp)) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 5.dp)
+            ) {
                 info.product?.let {
                     Text(
                         text = it.productName,
@@ -93,17 +105,18 @@ fun Product(info: FoodItem, modifier: Modifier = Modifier, onItemClick: () -> Un
 }
 
 @Composable
-fun ProductList(searchInfoViewModel: SearchInfoViewModel) {
-    val products = searchInfoViewModel.recentProducts
-    val currentProduct = searchInfoViewModel.currentProduct
+fun ProductList(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 128.dp),
         modifier = Modifier.imePadding()
     ) {
-        products.forEach { productInfo ->
+        searchInfoState.recentProducts.forEach { productInfo ->
             productInfo.product?.let { Log.d("RECIENTES", it.productName) }
             item {
-                Product(productInfo, onItemClick = { currentProduct.value = productInfo })
+
+                Product(productInfo, onItemClick = {
+                    onEvent(SearchInfoEvent.CurrentProductChange(productInfo))
+                })
 
             }
         }

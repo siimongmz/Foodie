@@ -38,6 +38,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,32 +54,74 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.api.data.FoodItem
+import com.example.foodie.events.SearchInfoEvent
+import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.states.MainAppState
+import com.example.foodie.states.SearchInfoState
 import com.example.foodie.tools.translate
-import com.example.foodie.viewModels.SearchInfoViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductInfoCard(searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
+fun ProductInfoCard(
+    searchInfoState: SearchInfoState,
+    mainAppState: MainAppState,
+    onEvent: (SearchInfoEvent) -> Unit
+) {
+    val foodApiFacade by remember{
+        mutableStateOf(FoodApiFacade())
+    }
+    if(searchInfoState.currentProduct == null && searchInfoState.code != null) {
+        LaunchedEffect(true) {
+            CoroutineScope(Dispatchers.IO).launch {
+                onEvent(
+                    SearchInfoEvent.CurrentProductChange(
+                        foodApiFacade.getProduct(
+                            searchInfoState.code!!
+                        )
+                    )
+                )
+                onEvent(SearchInfoEvent.CodeChange(null))
+            }
+        }
+    }
 
-    val currentProduct = searchInfoViewModel.currentProduct
 
-    searchInfoViewModel.currentProduct.value?.let {
+
+    searchInfoState.currentProduct?.let {
         ModalBottomSheet(
             onDismissRequest = {
-                currentProduct.value = null
+                onEvent(SearchInfoEvent.CurrentProductChange(null))
             }, sheetState = rememberModalBottomSheetState()
         ) {
-            FoodSheet(foodItem = it, searchInfoViewModel = searchInfoViewModel, mainAppState = mainAppState)
+            FoodSheet(
+                foodItem = it,
+                searchInfoState = searchInfoState,
+                mainAppState = mainAppState,
+                onEvent = onEvent
+            )
         }
     }
 }
 
 @Composable
-fun FoodSheet(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
-    if (foodItem.statusVerbose != "product found") ErrorFoodSheet() else SucceededFoodSheet(
-        foodItem = foodItem, searchInfoViewModel = searchInfoViewModel, mainAppState = mainAppState
-    )
+fun FoodSheet(
+    foodItem: FoodItem,
+    searchInfoState: SearchInfoState,
+    mainAppState: MainAppState,
+    onEvent: (SearchInfoEvent) -> Unit
+) {
+    if (foodItem.statusVerbose == "product found") {
+        SucceededFoodSheet(
+            foodItem = foodItem,
+            searchInfoState = searchInfoState,
+            mainAppState = mainAppState,
+            onEvent = onEvent
+        )
+
+    } else ErrorFoodSheet()
 }
 
 @Composable
@@ -108,12 +151,21 @@ fun ErrorFoodSheet() {
 }
 
 @Composable
-fun SucceededFoodSheet(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel, mainAppState: MainAppState) {
-    if (!searchInfoViewModel.recentProducts.contains(foodItem)) {
-        searchInfoViewModel.recentProducts.add(foodItem)
+fun SucceededFoodSheet(
+    foodItem: FoodItem,
+    searchInfoState: SearchInfoState,
+    mainAppState: MainAppState,
+    onEvent: (SearchInfoEvent) -> Unit
+) {
+    if (!searchInfoState.recentProducts.contains(foodItem)) {
+        onEvent(SearchInfoEvent.AddRecentProduct(foodItem))
     }
     Column() {
-        ProductPresentation(foodItem = foodItem,searchInfoViewModel)
+        ProductPresentation(
+            foodItem = foodItem,
+            searchInfoState = searchInfoState,
+            onEvent = onEvent
+        )
         Spacer(modifier = Modifier.height(20.dp))
         Column(Modifier.verticalScroll(rememberScrollState())) {
             AllergensInfo(foodItem = foodItem, mainAppState = mainAppState)
@@ -126,7 +178,11 @@ fun SucceededFoodSheet(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewMo
 }
 
 @Composable
-fun ProductPresentation(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewModel) {
+fun ProductPresentation(
+    foodItem: FoodItem,
+    searchInfoState: SearchInfoState,
+    onEvent: (SearchInfoEvent) -> Unit
+) {
 
     Box {
         Row {
@@ -144,7 +200,7 @@ fun ProductPresentation(foodItem: FoodItem, searchInfoViewModel: SearchInfoViewM
                     modifier = Modifier
                         .fillMaxSize()
                         .clickable {
-                            searchInfoViewModel.imagen.value = foodItem.product?.imageFrontSmallUrl
+                            onEvent(SearchInfoEvent.ImageUrlChange(foodItem.product?.imageFrontSmallUrl))
                         },
                     loading = {
                         CircularProgressIndicator()
@@ -338,8 +394,8 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
                         val actualAllergen = translate(allergen.split("en:")[1])
                         var allergic = false
 
-                        for (a in ALLERGENS_LIST){
-                            if (actualAllergen == a.name && mainAppState.allergens[a.allergen.ordinal]){
+                        for (a in ALLERGENS_LIST) {
+                            if (actualAllergen == a.name && mainAppState.allergens[a.allergen.ordinal]) {
                                 allergic = true
                             }
                         }
@@ -351,9 +407,12 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
                                     .height(50.dp)
                                     .padding(2.dp),
                                 shape = RoundedCornerShape(5.dp),
-                                colors = if (allergic) CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer, contentColor = MaterialTheme.colorScheme.onErrorContainer) else CardDefaults.cardColors()
+                                colors = if (allergic) CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                                ) else CardDefaults.cardColors()
 
-                                ) {
+                            ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center,

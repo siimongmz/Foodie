@@ -2,12 +2,12 @@ package com.example.foodie.ui.screens
 
 import android.content.Context
 import android.util.Log
-import com.example.foodie.viewModels.SearchInfoViewModel
+import com.example.foodie.events.SearchInfoEvent
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 
 
-fun codeScanner(context: Context,searchInfoViewModel: SearchInfoViewModel) {
+fun codeScanner(context: Context, onEvent: (SearchInfoEvent) -> Unit) {
 
     val options = GmsBarcodeScannerOptions.Builder()
         .enableAutoZoom()
@@ -17,14 +17,14 @@ fun codeScanner(context: Context,searchInfoViewModel: SearchInfoViewModel) {
 
     scanner.startScan()
         .addOnSuccessListener { barcode ->
-            Log.d("FOODIE-CODIGO","Exitoso")
-            searchInfoViewModel.code.value = barcode.rawValue
+            Log.d("FOODIE-CODIGO", "Exitoso")
+            onEvent(SearchInfoEvent.CodeChange(barcode.rawValue))
         }
         .addOnCanceledListener {
-            Log.d("FOODIE-CODIGO","Cancelado")
+            Log.d("FOODIE-CODIGO", "Cancelado")
         }
         .addOnFailureListener { _ ->
-            Log.d("FOODIE-CODIGO","Fallido")
+            Log.d("FOODIE-CODIGO", "Fallido")
         }
 
 }

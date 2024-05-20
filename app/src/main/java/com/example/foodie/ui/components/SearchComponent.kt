@@ -25,16 +25,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.foodie.api.data.FoodItem
+import com.example.foodie.events.SearchInfoEvent
 import com.example.foodie.facades.FoodApiFacade
-import com.example.foodie.viewModels.SearchInfoViewModel
+import com.example.foodie.states.SearchInfoState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
+fun SearchScreen(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
 
     val foodApiFacade: FoodApiFacade by remember {
         mutableStateOf(FoodApiFacade())
@@ -42,8 +42,8 @@ fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
     var visible by remember {
         mutableStateOf(false)
     }
-    val currentProduct = searchInfoViewModel.currentProduct
-    val animatedPadding = animateDpAsState(targetValue = if(visible) 30.dp else 0.dp, label = "searchBar")
+    val animatedPadding =
+        animateDpAsState(targetValue = if (visible) 30.dp else 0.dp, label = "searchBar")
 
     LaunchedEffect(key1 = Unit, block = {
         delay(600L)
@@ -61,22 +61,26 @@ fun SearchScreen(searchInfoViewModel: SearchInfoViewModel) {
             mutableStateOf("")
         }
 
-        Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(animatedPadding.value)
-                    ,
+                    .padding(animatedPadding.value),
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
                 maxLines = 1,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(onDone = {
+                    onEvent(SearchInfoEvent.CodeChange(text))
                     CoroutineScope(Dispatchers.IO).launch {
-                        currentProduct.value = foodApiFacade.getProduct(text)
-                        if (currentProduct.value == null)
-                            currentProduct.value = FoodItem(text, null, 0, "product not found")
+                        onEvent(SearchInfoEvent.CodeChange(text))
                     }
                 }),
                 trailingIcon = {
