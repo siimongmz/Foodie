@@ -9,4 +9,5 @@ val ALLERGENS_LIST = listOf(
     Allergen(ALLERGENS.MILK, "Leche"),
     Allergen(ALLERGENS.NUTS,"Nueces"),
     Allergen(ALLERGENS.SOYBEANS,"Soja"),
+    Allergen(ALLERGENS.FISH,"Pescado"),
 )
