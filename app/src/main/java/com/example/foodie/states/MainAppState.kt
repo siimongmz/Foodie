@@ -4,12 +4,12 @@ import androidx.compose.runtime.mutableStateListOf
 import com.example.foodie.ALLERGENS_LIST
 
 data class MainAppState(
-    var allergens:MutableList<Boolean> = initAllergens()
+    var allergens: MutableList<Boolean> = initAllergens()
 ) {
-    companion object{
-        fun initAllergens():MutableList<Boolean>{
+    companion object {
+        fun initAllergens(): MutableList<Boolean> {
             val allergensList = mutableStateListOf<Boolean>()
-            ALLERGENS_LIST.forEach() {
+            ALLERGENS_LIST.forEach() { _ ->
                 allergensList.add(false)
             }
             return allergensList
