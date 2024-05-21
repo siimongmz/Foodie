@@ -6,7 +6,8 @@ sealed interface SearchInfoEvent {
     data class CurrentProductChange(val foodItem: FoodItem?) : SearchInfoEvent
     data class CodeChange(val code: String?) : SearchInfoEvent
     data class AddRecentProduct(val foodItem: FoodItem?) : SearchInfoEvent
-    data class RemoveRecentProduct(val code: String?) : SearchInfoEvent
+    data class RemoveRecentProduct(val foodItem: FoodItem?) : SearchInfoEvent
     data class ImageUrlChange(val url: String?) : SearchInfoEvent
+    data object OpenAplication : SearchInfoEvent
 
 }
