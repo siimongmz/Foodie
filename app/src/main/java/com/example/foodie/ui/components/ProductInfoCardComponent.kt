@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -58,7 +57,7 @@ import com.example.foodie.events.SearchInfoEvent
 import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.states.MainAppState
 import com.example.foodie.states.SearchInfoState
-import com.example.foodie.tools.translate
+import com.example.foodie.util.tools.translate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -70,10 +69,10 @@ fun ProductInfoCard(
     mainAppState: MainAppState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
-    val foodApiFacade by remember{
+    val foodApiFacade by remember {
         mutableStateOf(FoodApiFacade())
     }
-    if(searchInfoState.currentProduct == null && searchInfoState.code != null) {
+    if (searchInfoState.currentProduct == null && searchInfoState.code != null) {
         LaunchedEffect(true) {
             CoroutineScope(Dispatchers.IO).launch {
                 onEvent(
@@ -157,9 +156,10 @@ fun SucceededFoodSheet(
     mainAppState: MainAppState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
-    if (!searchInfoState.recentProducts.contains(foodItem)) {
+    LaunchedEffect(key1 = "heart") {
         onEvent(SearchInfoEvent.AddRecentProduct(foodItem))
     }
+
     Column() {
         ProductPresentation(
             foodItem = foodItem,
@@ -225,7 +225,7 @@ fun ProductPresentation(
                         )
                     }
                 }
-                ProductActionButtons()
+                ProductActionButtons(foodItem = foodItem, onEvent = onEvent)
             }
         }
         Column(Modifier.height(150.dp)) {
@@ -235,61 +235,23 @@ fun ProductPresentation(
 }
 
 @Composable
-fun ProductActionButtons() {
+fun ProductActionButtons(foodItem: FoodItem, onEvent: (SearchInfoEvent) -> Unit) {
     var liked by remember {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
+
     Row(
         modifier = Modifier
             .width(IntrinsicSize.Max)
             .fillMaxHeight()
-            .padding(10.dp),
+            .padding(top = 10.dp, bottom = 10.dp, end = 10.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.Bottom,
 
         ) {
-        Button(
-            onClick = { liked = !liked },
-            modifier = Modifier
-                .padding(end = 10.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Icon(
-                imageVector = likeIcon(liked),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(0.5f)
-            )
-        }
-        Button(
-            onClick = { /*TODO*/ },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-            ),
-            modifier = Modifier
-                .padding(end = 10.dp)
-                .fillMaxWidth()
-                .weight(1f),
-            contentPadding = PaddingValues(0.dp),
-            shape = RoundedCornerShape(5.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Refresh,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(0.5f)
-
-            )
-        }
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onEvent(SearchInfoEvent.RemoveRecentProduct(foodItem)) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
