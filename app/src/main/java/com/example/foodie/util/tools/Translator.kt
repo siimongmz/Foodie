@@ -1,4 +1,4 @@
-package com.example.foodie.tools
+package com.example.foodie.util.tools
 
 fun translate(text: String): String {
     return when (text) {
