@@ -22,9 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -41,11 +39,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -65,9 +61,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductInfoCard(
-    searchInfoState: SearchInfoState,
-    mainAppState: MainAppState,
-    onEvent: (SearchInfoEvent) -> Unit
+    searchInfoState: SearchInfoState, mainAppState: MainAppState, onEvent: (SearchInfoEvent) -> Unit
 ) {
     val foodApiFacade by remember {
         mutableStateOf(FoodApiFacade())
@@ -96,10 +90,7 @@ fun ProductInfoCard(
             }, sheetState = rememberModalBottomSheetState()
         ) {
             FoodSheet(
-                foodItem = it,
-                searchInfoState = searchInfoState,
-                mainAppState = mainAppState,
-                onEvent = onEvent
+                foodItem = it, mainAppState = mainAppState, onEvent = onEvent
             )
         }
     }
@@ -107,17 +98,11 @@ fun ProductInfoCard(
 
 @Composable
 fun FoodSheet(
-    foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
-    mainAppState: MainAppState,
-    onEvent: (SearchInfoEvent) -> Unit
+    foodItem: FoodItem, mainAppState: MainAppState, onEvent: (SearchInfoEvent) -> Unit
 ) {
     if (foodItem.statusVerbose == "product found") {
         SucceededFoodSheet(
-            foodItem = foodItem,
-            searchInfoState = searchInfoState,
-            mainAppState = mainAppState,
-            onEvent = onEvent
+            foodItem = foodItem, mainAppState = mainAppState, onEvent = onEvent
         )
 
     } else ErrorFoodSheet()
@@ -151,20 +136,15 @@ fun ErrorFoodSheet() {
 
 @Composable
 fun SucceededFoodSheet(
-    foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
-    mainAppState: MainAppState,
-    onEvent: (SearchInfoEvent) -> Unit
+    foodItem: FoodItem, mainAppState: MainAppState, onEvent: (SearchInfoEvent) -> Unit
 ) {
     LaunchedEffect(key1 = "heart") {
         onEvent(SearchInfoEvent.AddRecentProduct(foodItem))
     }
 
-    Column() {
+    Column {
         ProductPresentation(
-            foodItem = foodItem,
-            searchInfoState = searchInfoState,
-            onEvent = onEvent
+            foodItem = foodItem, onEvent = onEvent
         )
         Spacer(modifier = Modifier.height(20.dp))
         Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -179,9 +159,7 @@ fun SucceededFoodSheet(
 
 @Composable
 fun ProductPresentation(
-    foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
-    onEvent: (SearchInfoEvent) -> Unit
+    foodItem: FoodItem, onEvent: (SearchInfoEvent) -> Unit
 ) {
 
     Box {
@@ -236,9 +214,6 @@ fun ProductPresentation(
 
 @Composable
 fun ProductActionButtons(foodItem: FoodItem, onEvent: (SearchInfoEvent) -> Unit) {
-    var liked by remember {
-        mutableStateOf(true)
-    }
 
     Row(
         modifier = Modifier
@@ -381,8 +356,7 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
                                     modifier = Modifier.fillMaxSize()
                                 ) {
                                     Text(
-                                        text = actualAllergen,
-                                        textAlign = TextAlign.Center
+                                        text = actualAllergen, textAlign = TextAlign.Center
                                     )
                                 }
                             }
@@ -394,13 +368,5 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
             }
         }
 
-    }
-}
-
-fun likeIcon(liked: Boolean): ImageVector {
-    return if (liked) {
-        Icons.Filled.Favorite
-    } else {
-        Icons.Outlined.FavoriteBorder
     }
 }

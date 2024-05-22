@@ -70,6 +70,7 @@ class MainActivity : ComponentActivity() {
     private val searchInfoViewModel by viewModels<SearchInfoViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
+                @Suppress("UNCHECKED_CAST")
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     return SearchInfoViewModel(db.dao) as T
                 }
@@ -135,7 +136,6 @@ class MainActivity : ComponentActivity() {
                         },
                         floatingActionButton = {
                             ScannerFAB(
-                                searchInfoState = searchInfoViewModel.state.collectAsState().value,
                                 onEvent = searchInfoViewModel::onEvent
                             )
                         },

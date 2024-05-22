@@ -15,17 +15,13 @@ import com.example.foodie.states.SearchInfoState
 fun FullScreenImage(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
     searchInfoState.imageUrl?.let {
         Dialog(onDismissRequest = { onEvent(SearchInfoEvent.ImageUrlChange(null)) }) {
-            Card(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clickable { onEvent(SearchInfoEvent.ImageUrlChange(null)) }) {
+            Card(modifier = Modifier
+                .fillMaxSize()
+                .clickable { onEvent(SearchInfoEvent.ImageUrlChange(null)) }) {
                 SubcomposeAsyncImage(
-                    model = searchInfoState.imageUrl,
-                    modifier = Modifier.fillMaxSize(),
-                    loading = {
+                    model = searchInfoState.imageUrl, modifier = Modifier.fillMaxSize(), loading = {
                         CircularProgressIndicator()
-                    },
-                    contentDescription = null
+                    }, contentDescription = null
                 )
             }
         }

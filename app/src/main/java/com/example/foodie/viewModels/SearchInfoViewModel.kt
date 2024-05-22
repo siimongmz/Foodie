@@ -16,7 +16,7 @@ class SearchInfoViewModel(private val dao: FoodItemDao) : ViewModel() {
 
     fun onEvent(event: SearchInfoEvent) {
         when (event) {
-            SearchInfoEvent.OpenAplication ->{
+            SearchInfoEvent.OpenAplication -> {
                 CoroutineScope(Dispatchers.IO).launch {
                     state.update {
                         it.copy(recentProducts = dao.getFoodItems())

@@ -22,38 +22,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.foodie.R
 import com.example.foodie.events.SearchInfoEvent
-import com.example.foodie.states.SearchInfoState
 import com.example.foodie.ui.screens.codeScanner
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar() {
-    CenterAlignedTopAppBar(
-        title = {
+    CenterAlignedTopAppBar(title = {
 
-            Icon(
-                painter = painterResource(id = R.drawable.foodie_text),
-                contentDescription = null,
-                modifier = Modifier.size(100.dp)
-            )
-        }, colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.secondary,
-        ), navigationIcon = {
-            Icon(
-                imageVector = Icons.Outlined.AccountCircle,
-                contentDescription = "Search",
-                modifier = Modifier.padding(10.dp, 10.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.foodie_text),
+            contentDescription = null,
+            modifier = Modifier.size(100.dp)
+        )
+    }, colors = TopAppBarDefaults.topAppBarColors(
+        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+        titleContentColor = MaterialTheme.colorScheme.secondary,
+    ), navigationIcon = {
+        Icon(
+            imageVector = Icons.Outlined.AccountCircle,
+            contentDescription = "Search",
+            modifier = Modifier.padding(10.dp, 10.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
 
     )
 }
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun ScannerFAB(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
+fun ScannerFAB(onEvent: (SearchInfoEvent) -> Unit) {
     var showScanner by rememberSaveable {
         mutableStateOf(false)
     }
@@ -64,9 +62,7 @@ fun ScannerFAB(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> U
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     ) {
         Icon(
-            painterResource(id = R.drawable.just_logo),
-            "Scann",
-            modifier = Modifier.padding(10.dp)
+            painterResource(id = R.drawable.just_logo), "Scann", modifier = Modifier.padding(10.dp)
         )
     }
     if (showScanner) {

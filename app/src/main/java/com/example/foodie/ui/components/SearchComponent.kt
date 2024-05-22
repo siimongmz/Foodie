@@ -26,19 +26,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.foodie.events.SearchInfoEvent
-import com.example.foodie.facades.FoodApiFacade
-import com.example.foodie.states.SearchInfoState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchScreen(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) -> Unit) {
-
-    val foodApiFacade: FoodApiFacade by remember {
-        mutableStateOf(FoodApiFacade())
-    }
+fun SearchScreen(onEvent: (SearchInfoEvent) -> Unit) {
     var visible by remember {
         mutableStateOf(false)
     }
@@ -65,17 +59,15 @@ fun SearchScreen(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) ->
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(animatedPadding.value),
+            TextField(modifier = Modifier
+                .fillMaxWidth()
+                .padding(animatedPadding.value),
                 value = text,
                 onValueChange = { text = it },
                 singleLine = true,
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number,
-                    imeAction = ImeAction.Done
+                    keyboardType = KeyboardType.Number, imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(onDone = {
                     onEvent(SearchInfoEvent.CodeChange(text))
@@ -85,8 +77,7 @@ fun SearchScreen(searchInfoState: SearchInfoState, onEvent: (SearchInfoEvent) ->
                 }),
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search"
+                        imageVector = Icons.Filled.Search, contentDescription = "Search"
                     )
                 })
         }

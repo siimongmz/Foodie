@@ -25,9 +25,7 @@ import com.example.foodie.states.MainAppState
 
 @Composable
 fun ProfileScreen(
-    modifier: Modifier,
-    mainAppState: MainAppState,
-    onEvent: (MainAppEvent) -> Unit
+    modifier: Modifier, mainAppState: MainAppState, onEvent: (MainAppEvent) -> Unit
 ) {
 
     Column(
@@ -47,9 +45,7 @@ fun ProfileScreen(
 
 @Composable
 fun AllergenListItem(
-    alergen: Allergen,
-    state: MainAppState,
-    onEvent: (MainAppEvent) -> Unit
+    alergen: Allergen, state: MainAppState, onEvent: (MainAppEvent) -> Unit
 ) {
 
     Row(Modifier.padding(vertical = 15.dp)) {
@@ -62,17 +58,15 @@ fun AllergenListItem(
             Text(text = alergen.name, fontSize = 30.sp)
         }
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 20.dp)
-                .weight(1f), contentAlignment = Alignment.CenterEnd
+                .weight(1f),
+            contentAlignment = Alignment.CenterEnd
         ) {
-            Switch(
-                checked = state.allergens[alergen.allergen.ordinal],
-                onCheckedChange = {
-                    onEvent(MainAppEvent.AllergenChange(alergen))
-                }
-            )
+            Switch(checked = state.allergens[alergen.allergen.ordinal], onCheckedChange = {
+                onEvent(MainAppEvent.AllergenChange(alergen))
+            })
         }
     }
 

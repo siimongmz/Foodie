@@ -9,7 +9,7 @@ data class Product(
     @SerializedName("product_name")
     val productName: String,
     @SerializedName("image_front_small_url")
-    val imageFrontSmallUrl:String,
+    val imageFrontSmallUrl: String,
     @SerializedName("image_ingredients_url")
-    val imageIngredientsUrl:String
+    val imageIngredientsUrl: String
 )

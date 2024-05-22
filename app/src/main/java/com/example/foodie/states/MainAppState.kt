@@ -9,8 +9,8 @@ data class MainAppState(
     companion object {
         fun initAllergens(): MutableList<Boolean> {
             val allergensList = mutableStateListOf<Boolean>()
-            ALLERGENS_LIST.forEach() { _ ->
-                allergensList.add(false)
+            ALLERGENS_LIST.forEach { _ ->
+                allergensList.add(element = false)
             }
             return allergensList
         }

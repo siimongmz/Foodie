@@ -8,5 +8,5 @@ import retrofit2.http.Path
 interface FoodApiInterface {
 
     @GET("product/{code}?lc=es&?fields=product_name,ingredients,brands,allergens,image_front_small_url,image_ingredients_url")
-    fun getData(@Path("code") codeId: String):Call<FoodItem>
+    fun getData(@Path("code") codeId: String): Call<FoodItem>
 }
