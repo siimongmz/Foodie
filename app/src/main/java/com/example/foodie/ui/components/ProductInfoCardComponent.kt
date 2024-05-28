@@ -100,7 +100,6 @@ fun ProductInfoCard(
                 foodItem = it,
                 mainAppState = mainAppState,
                 onEvent = onEvent,
-                searchInfoState = searchInfoState
             )
             DeleteDialog(foodItem = it, onEvent = onEvent, searchInfoState = searchInfoState)
         }
@@ -111,7 +110,6 @@ fun ProductInfoCard(
 fun FoodSheet(
     foodItem: FoodItem,
     mainAppState: MainAppState,
-    searchInfoState: SearchInfoState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
     if (foodItem.statusVerbose == "product found") {
@@ -119,7 +117,6 @@ fun FoodSheet(
             foodItem = foodItem,
             mainAppState = mainAppState,
             onEvent = onEvent,
-            searchInfoState = searchInfoState
         )
 
     } else ErrorFoodSheet()
@@ -155,14 +152,13 @@ fun ErrorFoodSheet() {
 fun SucceededFoodSheet(
     foodItem: FoodItem,
     mainAppState: MainAppState,
-    searchInfoState: SearchInfoState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
     LaunchedEffect(key1 = "heart") {
         onEvent(SearchInfoEvent.AddRecentProduct(foodItem))
     }
 
-    Column() {
+    Column {
         ProductPresentation(
             foodItem = foodItem,
             onEvent = onEvent,
