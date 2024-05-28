@@ -7,4 +7,5 @@ data class SearchInfoState(
     var code: String? = null,
     var recentProducts: List<FoodItem> = emptyList(),
     var imageUrl: String? = null,
+    var isDeleting:Boolean = false,
 )

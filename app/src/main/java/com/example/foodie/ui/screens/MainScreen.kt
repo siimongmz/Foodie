@@ -37,7 +37,7 @@ fun MainScreen(
     onEvent: (SearchInfoEvent) -> Unit
 ) {
     Column(modifier = modifier) {
-        SearchScreen(searchInfoState = searchInfoState, onEvent = onEvent)
+        SearchScreen(onEvent = onEvent)
 
         ProductList(
             searchInfoState = searchInfoState,

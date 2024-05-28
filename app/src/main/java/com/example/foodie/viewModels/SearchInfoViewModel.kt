@@ -23,6 +23,11 @@ class SearchInfoViewModel(private val dao: FoodItemDao) : ViewModel() {
                     }
                 }
             }
+            SearchInfoEvent.IsDeleting ->{
+                state.update {
+                    it.copy(isDeleting = !it.isDeleting)
+                }
+            }
 
             is SearchInfoEvent.CurrentProductChange -> {
                 state.update { searchInfoState ->
