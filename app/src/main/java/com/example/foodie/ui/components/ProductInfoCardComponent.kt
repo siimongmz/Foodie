@@ -227,7 +227,7 @@ fun ProductPresentation(
                         )
                     }
                 }
-                ProductActionButtons(foodItem = foodItem,searchInfoState = searchInfoState, onEvent = onEvent)
+                ProductActionButtons(onEvent = onEvent)
             }
         }
         Column(Modifier.height(150.dp)) {
@@ -238,8 +238,6 @@ fun ProductPresentation(
 
 @Composable
 fun ProductActionButtons(
-    foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
 
