@@ -9,12 +9,15 @@ import kotlinx.coroutines.flow.update
 class MainAppViewModel() : ViewModel() {
 
     val state = MutableStateFlow(MainAppState())
-    fun onEvent(event: MainAppEvent){
-        when(event){
-            is MainAppEvent.AllergenChange-> {
+    fun onEvent(event: MainAppEvent) {
+        when (event) {
+            is MainAppEvent.AllergenChange -> {
                 state.update { mainAppState ->
                     mainAppState.copy(
-                        allergens = mainAppState.allergens.also { it[event.allergen.allergen.ordinal] = !it[event.allergen.allergen.ordinal] }
+                        allergens = mainAppState.allergens.also {
+                            it[event.allergen.allergen.ordinal] =
+                                !it[event.allergen.allergen.ordinal]
+                        }
                     )
                 }
             }

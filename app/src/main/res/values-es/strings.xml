@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_question">Estas seguro de que quieres borrar?</string>
+    <string name="confirm">Confirmar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="unknown">Desconocido</string>
+    <string name="alergens">Alergenos</string>
+    <string name="ingredients">Ingredientes</string>
+    <string name="search">Buscar</string>
+    <string name="developed_by">Aplicación desarrollada por</string>
+    <string name="info">Info</string>
+    <string name="home">Principal</string>
+    <string name="allergies">Alergias</string>
+    <string name="gluten">Gluten</string>
+    <string name="eggs">Huevos</string>
+    <string name="milk">Leche</string>
+    <string name="nuts">Nueces</string>
+    <string name="soy">Soja</string>
+    <string name="fish">Pescado</string>
+    <string name="no_translation">Sin Traducción:</string>
+</resources>

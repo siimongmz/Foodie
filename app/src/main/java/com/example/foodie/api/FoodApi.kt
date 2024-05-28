@@ -7,11 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class FoodApi {
-    companion object{
-        private const val BASE_URL = "https://world.openfoodfacts.net/api/v2/"
+    companion object {
+        private const val BASE_URL = "https://world.openfoodfacts.org/api/v2/"
     }
-
-    //Ejemplo    = "https://world.openfoodfacts.net/api/v2/product/3017624010701?fields=product_name,ingredients,brands,allergens"
 
     fun getProduct(code: String): FoodItem? {
         val retrofitBuilder =

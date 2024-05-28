@@ -15,19 +15,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.configuration.Allergen
 import com.example.foodie.events.MainAppEvent
 import com.example.foodie.states.MainAppState
+import com.example.foodie.util.tools.internationalize
 
 
 @Composable
 fun ProfileScreen(
-    modifier: Modifier,
-    mainAppState: MainAppState,
-    onEvent: (MainAppEvent) -> Unit
+    modifier: Modifier, mainAppState: MainAppState, onEvent: (MainAppEvent) -> Unit
 ) {
 
     Column(
@@ -47,9 +47,7 @@ fun ProfileScreen(
 
 @Composable
 fun AllergenListItem(
-    alergen: Allergen,
-    state: MainAppState,
-    onEvent: (MainAppEvent) -> Unit
+    alergen: Allergen, state: MainAppState, onEvent: (MainAppEvent) -> Unit
 ) {
 
     Row(Modifier.padding(vertical = 15.dp)) {
@@ -59,20 +57,18 @@ fun AllergenListItem(
                 .padding(start = 20.dp)
                 .weight(1f)
         ) {
-            Text(text = alergen.name, fontSize = 30.sp)
+            Text(text = internationalize(LocalContext.current,alergen.name), fontSize = 30.sp)
         }
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(end = 20.dp)
-                .weight(1f), contentAlignment = Alignment.CenterEnd
+                .weight(1f),
+            contentAlignment = Alignment.CenterEnd
         ) {
-            Switch(
-                checked = state.allergens[alergen.allergen.ordinal],
-                onCheckedChange = {
-                    onEvent(MainAppEvent.AllergenChange(alergen))
-                }
-            )
+            Switch(checked = state.allergens[alergen.allergen.ordinal], onCheckedChange = {
+                onEvent(MainAppEvent.AllergenChange(alergen))
+            })
         }
     }
 

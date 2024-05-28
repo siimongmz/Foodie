@@ -11,11 +11,14 @@ import com.example.foodie.api.data.FoodItem
 interface FoodItemDao {
     @Upsert
     suspend fun upsertFoodItem(foodItem: FoodItem)
+
     @Delete
     suspend fun deleteFoodItem(foodItem: FoodItem)
+
     @Query("SELECT * FROM FoodItem")
-    fun getFoodItems():List<FoodItem>
+    fun getFoodItems(): List<FoodItem>
+
     @Query("SELECT * FROM FoodItem WHERE code=:id ")
-    fun getFoodItemById(id:String): LiveData<FoodItem>
+    fun getFoodItemById(id: String): LiveData<FoodItem>
 
 }

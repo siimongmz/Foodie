@@ -22,9 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -41,22 +40,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.example.foodie.ALLERGENS_LIST
+import com.example.foodie.R
 import com.example.foodie.api.data.FoodItem
 import com.example.foodie.events.SearchInfoEvent
 import com.example.foodie.facades.FoodApiFacade
 import com.example.foodie.states.MainAppState
 import com.example.foodie.states.SearchInfoState
+import com.example.foodie.util.tools.internationalize
 import com.example.foodie.util.tools.translate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -97,10 +98,10 @@ fun ProductInfoCard(
         ) {
             FoodSheet(
                 foodItem = it,
-                searchInfoState = searchInfoState,
                 mainAppState = mainAppState,
-                onEvent = onEvent
+                onEvent = onEvent,
             )
+            DeleteDialog(foodItem = it, onEvent = onEvent, searchInfoState = searchInfoState)
         }
     }
 }
@@ -108,16 +109,14 @@ fun ProductInfoCard(
 @Composable
 fun FoodSheet(
     foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
     mainAppState: MainAppState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
     if (foodItem.statusVerbose == "product found") {
         SucceededFoodSheet(
             foodItem = foodItem,
-            searchInfoState = searchInfoState,
             mainAppState = mainAppState,
-            onEvent = onEvent
+            onEvent = onEvent,
         )
 
     } else ErrorFoodSheet()
@@ -152,7 +151,6 @@ fun ErrorFoodSheet() {
 @Composable
 fun SucceededFoodSheet(
     foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
     mainAppState: MainAppState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
@@ -160,11 +158,10 @@ fun SucceededFoodSheet(
         onEvent(SearchInfoEvent.AddRecentProduct(foodItem))
     }
 
-    Column() {
+    Column {
         ProductPresentation(
             foodItem = foodItem,
-            searchInfoState = searchInfoState,
-            onEvent = onEvent
+            onEvent = onEvent,
         )
         Spacer(modifier = Modifier.height(20.dp))
         Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -180,7 +177,6 @@ fun SucceededFoodSheet(
 @Composable
 fun ProductPresentation(
     foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
 
@@ -225,7 +221,7 @@ fun ProductPresentation(
                         )
                     }
                 }
-                ProductActionButtons(foodItem = foodItem, onEvent = onEvent)
+                ProductActionButtons(onEvent = onEvent)
             }
         }
         Column(Modifier.height(150.dp)) {
@@ -235,10 +231,9 @@ fun ProductPresentation(
 }
 
 @Composable
-fun ProductActionButtons(foodItem: FoodItem, onEvent: (SearchInfoEvent) -> Unit) {
-    var liked by remember {
-        mutableStateOf(true)
-    }
+fun ProductActionButtons(
+    onEvent: (SearchInfoEvent) -> Unit
+) {
 
     Row(
         modifier = Modifier
@@ -251,7 +246,7 @@ fun ProductActionButtons(foodItem: FoodItem, onEvent: (SearchInfoEvent) -> Unit)
         ) {
 
         Button(
-            onClick = { onEvent(SearchInfoEvent.RemoveRecentProduct(foodItem)) },
+            onClick = { onEvent(SearchInfoEvent.IsDeleting) },
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                 contentColor = MaterialTheme.colorScheme.onErrorContainer
@@ -281,7 +276,7 @@ fun IngredientInfo(foodItem: FoodItem) {
     ) {
         Column(modifier = Modifier) {
             Text(
-                text = "Ingredientes",
+                text = stringResource(R.string.ingredients),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -339,7 +334,7 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Text(
-                text = "Alergenos",
+                text = stringResource(R.string.alergens),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.W600,
                 modifier = Modifier.padding(bottom = 8.dp)
@@ -381,7 +376,7 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
                                     modifier = Modifier.fillMaxSize()
                                 ) {
                                     Text(
-                                        text = actualAllergen,
+                                        text = internationalize(LocalContext.current,actualAllergen),
                                         textAlign = TextAlign.Center
                                     )
                                 }
@@ -390,17 +385,50 @@ fun AllergensInfo(foodItem: FoodItem, mainAppState: MainAppState) {
                     }
                 }
             } else {
-                Text(text = "Desconocido")
+                Text(text = stringResource(R.string.unknown))
             }
         }
 
     }
 }
 
-fun likeIcon(liked: Boolean): ImageVector {
-    return if (liked) {
-        Icons.Filled.Favorite
-    } else {
-        Icons.Outlined.FavoriteBorder
+@Composable
+fun DeleteDialog(
+    foodItem: FoodItem,
+    onEvent: (SearchInfoEvent) -> Unit,
+    searchInfoState: SearchInfoState,
+){
+    if(searchInfoState.isDeleting){
+        AlertDialog(
+            text = {
+                   Text(text = stringResource(R.string.delete_question))
+            },
+            icon = {
+                   Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
+            },
+            onDismissRequest = {
+                onEvent(SearchInfoEvent.IsDeleting)
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onEvent(SearchInfoEvent.RemoveRecentProduct(foodItem))
+                        onEvent(SearchInfoEvent.IsDeleting)
+                        onEvent(SearchInfoEvent.CurrentProductChange(null))
+                    }) {
+                    Text(text = stringResource(R.string.confirm))
+                }
+            },
+            dismissButton =  {
+                Button(
+                    onClick = {
+                        onEvent(SearchInfoEvent.IsDeleting)
+                    }) {
+                    Text(text = stringResource(R.string.cancel))
+                }
+            }
+
+        )
     }
+
 }
