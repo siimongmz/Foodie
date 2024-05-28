@@ -166,7 +166,6 @@ fun SucceededFoodSheet(
         ProductPresentation(
             foodItem = foodItem,
             onEvent = onEvent,
-            searchInfoState = searchInfoState
         )
         Spacer(modifier = Modifier.height(20.dp))
         Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -182,7 +181,6 @@ fun SucceededFoodSheet(
 @Composable
 fun ProductPresentation(
     foodItem: FoodItem,
-    searchInfoState: SearchInfoState,
     onEvent: (SearchInfoEvent) -> Unit
 ) {
 
