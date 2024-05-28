@@ -22,9 +22,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.foodie.R
 import com.example.foodie.events.SearchInfoEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +79,7 @@ fun SearchScreen(onEvent: (SearchInfoEvent) -> Unit) {
                 }),
                 trailingIcon = {
                     Icon(
-                        imageVector = Icons.Filled.Search, contentDescription = "Search"
+                        imageVector = Icons.Filled.Search, contentDescription = stringResource(R.string.search)
                     )
                 })
         }

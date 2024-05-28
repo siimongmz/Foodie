@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -87,17 +88,17 @@ class MainActivity : ComponentActivity() {
             }
             val items = listOf(
                 BottomItem(
-                    title = "Info",
+                    title = stringResource(R.string.info),
                     route = SCREENS.INFO,
                     selectedIcon = Icons.Filled.Info,
                     unselectedIcon = Icons.Outlined.Info
                 ), BottomItem(
-                    title = "Home",
+                    title = stringResource(R.string.home),
                     route = SCREENS.HOME,
                     selectedIcon = Icons.Filled.Home,
                     unselectedIcon = Icons.Outlined.Home
                 ), BottomItem(
-                    title = "Allergies",
+                    title = stringResource(R.string.allergies),
                     route = SCREENS.PROFILE,
                     selectedIcon = ImageVector.vectorResource(id = R.drawable.baseline_no_food_24),
                     unselectedIcon = ImageVector.vectorResource(id = R.drawable.outline_no_food_24)

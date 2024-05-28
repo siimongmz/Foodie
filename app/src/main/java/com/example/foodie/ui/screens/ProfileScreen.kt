@@ -15,12 +15,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.foodie.ALLERGENS_LIST
 import com.example.foodie.configuration.Allergen
 import com.example.foodie.events.MainAppEvent
 import com.example.foodie.states.MainAppState
+import com.example.foodie.util.tools.internationalize
 
 
 @Composable
@@ -55,7 +57,7 @@ fun AllergenListItem(
                 .padding(start = 20.dp)
                 .weight(1f)
         ) {
-            Text(text = alergen.name, fontSize = 30.sp)
+            Text(text = internationalize(LocalContext.current,alergen.name), fontSize = 30.sp)
         }
         Box(
             modifier = Modifier

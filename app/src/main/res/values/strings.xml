@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">Foodie</string>
+    <string name="app_name" translatable="false">Foodie</string>
+    <string name="delete_question">Are you sure you want to delete?</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="unknown">Unknown</string>
+    <string name="alergens">Alergens</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="search">Search</string>
+    <string name="developed_by">App developed by</string>
+    <string name="info">Info</string>
+    <string name="home">Home</string>
+    <string name="allergies">Allergies</string>
+    <string name="gluten">Gluten</string>
+    <string name="eggs">Eggs</string>
+    <string name="milk">Milk</string>
+    <string name="nuts">Nuts</string>
+    <string name="soy">Soy</string>
+    <string name="fish">Fish</string>
+    <string name="no_translation">No Translation:</string>
 </resources>
